@@ -114,34 +114,53 @@ Authentication
 Authentication is handled securely and automatically via Azure DevOps and Key Vault:
 
 1. AzureRM Provider Authentication
+
 Purpose: Allows Terraform to provision resources in your Azure subscription.
+
 How:
-Uses Service Principal credentials (ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID, ARM_SUBSCRIPTION_ID) fetched from Azure Key Vault.
-These are injected as environment variables in the pipeline and referenced in provider blocks.
-See databricks-infra/main.tf and Pipelines/Templates/databricks-infra-plan-template.yaml.
+
+    Uses Service Principal credentials (ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_TENANT_ID, ARM_SUBSCRIPTION_ID)     fetched from Azure Key Vault.
+    These are injected as environment variables in the pipeline and referenced in provider blocks.
+    See databricks-infra/main.tf and Pipelines/Templates/databricks-infra-plan-template.yaml.
+
 2. Databricks Provider Authentication
+   
 Purpose: Allows Terraform to manage Databricks resources (clusters, pools, Unity Catalog, etc.) in your workspace.
+
 How:
-Uses the Databricks workspace host and Azure resource ID (constructed from variables in dev.tfvars).
-Authenticates via the same Service Principal, leveraging Azure AD integration.
-See databricks-infra/main.tf, databricks-uc-data-assets/main.tf, and databricks-uc-external-locations/main.tf.
+
+    Uses the Databricks workspace host and Azure resource ID (constructed from variables in dev.tfvars).
+    Authenticates via the same Service Principal, leveraging Azure AD integration.
+    See databricks-infra/main.tf, databricks-uc-data-assets/main.tf, and databricks-uc-external-                  locations/main.tf.
+
 3. Key Vault Integration
+   
 Purpose: Securely manage secrets (like passwords, keys) for Databricks secret scopes.
+
 How:
-Secret scopes in Databricks are linked to Azure Key Vault for secure secret management.
-key_vault_name, scope_name, and key_vault_resource_group are used to configure this linkage in Terraform modules.
-See modules/infra-assets/main.tf.
+
+    Secret scopes in Databricks are linked to Azure Key Vault for secure secret management.
+    key_vault_name, scope_name, and key_vault_resource_group are used to configure this linkage in Terraform modules.
+    See modules/infra-assets/main.tf.
+
 4. Remote State
+   
 Purpose: Store Terraform state securely in Azure Storage.
+
 How:
-Defined in backend config files such as dev_backend.conf and prd_backend.conf in each environment folder.
-See databricks-infra/dev/dev_backend.conf.
+
+    Defined in backend config files such as dev_backend.conf and prd_backend.conf in each environment folder.
+    See databricks-infra/dev/dev_backend.conf.
+
 5. Pipeline Secret Management
+   
 Purpose: Automate the secure injection of credentials into pipeline jobs.
+
 How:
-Azure DevOps tasks fetch secrets from Azure Key Vault at runtime.
-Secrets are set as environment variables for Terraform commands.
-See Pipelines/Templates/databricks-infra-plan-template.yaml and similar templates.
+
+    Azure DevOps tasks fetch secrets from Azure Key Vault at runtime.
+    Secrets are set as environment variables for Terraform commands.
+    See Pipelines/Templates/databricks-infra-plan-template.yaml and similar templates.
 
 
 Authentication-Related Files
