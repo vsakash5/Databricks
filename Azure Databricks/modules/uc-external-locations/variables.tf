@@ -7,8 +7,8 @@ variable "environment" {
   description = "Environment to deploy the resources to"
   type        = string
   validation {
-    condition     = var.environment == "dev" || var.environment == "tst" || var.environment == "uat" || var.environment == "prd"
-    error_message = "Invalid environment. Allowed values are dev, tst, uat, prd"
+    condition     = var.environment == "dev" || var.environment == "prd"
+    error_message = "Invalid environment. Allowed values are dev, prd"
   }
 }
 

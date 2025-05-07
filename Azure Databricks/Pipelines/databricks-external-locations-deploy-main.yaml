@@ -12,15 +12,6 @@ parameters:
     type: boolean
     default: false
   
-  - name: uatPlan
-    displayName: 'UAT - Plan'
-    type: boolean
-    default: false
-  
-  - name: uatApply
-    displayName: 'UAT - Apply'
-    type: boolean
-    default: false
   
   - name: prdPlan
     displayName: 'PRD - Plan'
@@ -69,33 +60,6 @@ stages:
         environment: "dev"
         subscriptionId: "00000000-0000-0000-0000-000000000000"
   
-  # UAT Plan stage
-  - stage: UAT_Plan
-    displayName: "Terraform Plan to UAT"
-    condition: and(succeeded(), eq('${{ parameters.uatPlan }}', true))
-    dependsOn: Build
-    jobs:
-    - template: "./Templates/databricks-external-locations-plan-template.yaml"
-      parameters:
-        poolName: example-pool
-        connectedServiceName: "example-service-connection"
-        keyVaultName: "example-keyvault"
-        environment: "uat"
-        subscriptionId: "00000000-0000-0000-0000-000000000000"
-
-  # UAT Apply stage
-  - stage: UAT_Apply
-    displayName: "Terraform Apply to UAT"
-    condition: and(succeeded(), eq('${{ parameters.uatApply }}', true))
-    dependsOn: Build
-    jobs:
-    - template: "./Templates/databricks-external-locations-apply-template.yaml"
-      parameters:
-        poolName: example-pool
-        connectedServiceName: "example-service-connection"
-        keyVaultName: "example-keyvault"
-        environment: "uat"
-        subscriptionId: "00000000-0000-0000-0000-000000000000"
       
   # PRD Plan stage
   - stage: PRD_Plan

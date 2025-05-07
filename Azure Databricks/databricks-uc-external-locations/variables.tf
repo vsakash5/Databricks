@@ -5,10 +5,10 @@ variable "az_subscription_id" {
 variable "environment" {
   description = "Environment to deploy the resources to"
   default     = "dev"
-  // Allowed values: dev, tst, uat, pro
+  // Allowed values: dev, pro
   validation {
-    condition     = var.environment == "dev" || var.environment == "tst" || var.environment == "uat" || var.environment == "prd"
-    error_message = "Invalid environment. Allowed values are dev, tst, uat, prd"
+    condition     = var.environment == "dev" || var.environment == "prd"
+    error_message = "Invalid environment. Allowed values are dev, prd"
   }
 }
 
