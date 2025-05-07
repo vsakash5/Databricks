@@ -1,0 +1,36 @@
+<!--
+Diagram: Unity Catalog Terraform Architecture
+
+[Azure Subscription]
+  |
+  +-- [Resource Group: dev]
+  |      |
+  |      +-- [Databricks Workspace: dev]
+  |      |      |
+  |      |      +-- [Managed Identity Access Connector]
+  |      |      +-- [Key Vault]
+  |      |      +-- [Storage Accounts]
+  |      |      |      +-- catalog
+  |      |      |      +-- bronze
+  |      |      |      +-- silver
+  |      |      |      +-- gold
+  |      |      |      +-- landing_1, landing_2, landing_3
+  |      |      |      +-- cdh
+  |      |      |      +-- workspace
+  |      |      +-- [Terraform State Storage]
+  |      |      +-- [Databricks Metastore]
+  |      |      +-- [Unity Catalog]
+  |      |             +-- Catalogs (sa, cdh, ws)
+  |      |             +-- Schemas
+  |      |             +-- Volumes
+  |      |             +-- External Locations
+  |      |             +-- Instance Pools
+  |      |             +-- Shared Clusters
+  |
+  +-- [Resource Group: prd]
+         |
+         +-- [Databricks Workspace: prd]
+                ... (same as above)
+-->
+
+<!-- Use draw.io to visually represent the above structure with boxes and arrows. -->

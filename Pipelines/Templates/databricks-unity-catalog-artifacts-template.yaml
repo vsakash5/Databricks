@@ -1,0 +1,22 @@
+parameters:
+  - name: poolName
+    type: string
+
+jobs:
+  - job: Build
+    displayName: Build and publish artifacts
+    pool: ${{ parameters.poolName }}
+    steps:
+      - task: CopyFiles@2
+        displayName: Move from databricks to artifact 
+        inputs:
+          SourceFolder: "$(Build.SourcesDirectory)/cicd/Databricks_CI_CD/UnityCatalog"
+          Contents: "**"
+          TargetFolder: "$(Build.ArtifactStagingDirectory)/"
+          OverWrite: true
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Pipeline databricks Artifact'
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)/'
+          artifact: DatabricksUnityCatalogBuild

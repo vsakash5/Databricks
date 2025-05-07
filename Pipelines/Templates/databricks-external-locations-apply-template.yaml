@@ -1,0 +1,57 @@
+parameters:
+  - name: connectedServiceName
+    type: string
+  - name: poolName
+    type: string
+  - name: keyVaultName
+    type: string
+  - name: environment
+    type: string
+  - name: subscriptionId
+    type: string
+
+jobs:
+  - job: Deploy
+    displayName: Deploy databricks artifacts
+    pool: ${{ parameters.poolName }}
+    steps:      
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download Pipeline databricks Artifact'
+      inputs:
+        artifact: DatabricksUnityCatalogBuild   
+
+    - task: AzurePowerShell@5
+      displayName: 'Fetch secrets from Key Vault'
+      inputs:
+        azureSubscription: "${{ parameters.connectedServiceName }}"
+        ScriptType: "InlineScript"
+        Inline: |
+          Write-Host "Fetching secret from Key Vault..."
+          $clientId = Get-AzKeyVaultSecret -VaultName ${{ parameters.keyVaultName }} -Name 'Databricks-ARM-ClientId'
+          $clientId= $clientId.SecretValue | ConvertFrom-SecureString -AsPlainText            
+          Write-Host "##vso[task.setvariable variable=ARM_CLIENT_ID;]$clientId"
+          $clientSecret = Get-AzKeyVaultSecret -VaultName ${{ parameters.keyVaultName }} -Name 'Databricks-ARM-ClientSecret'
+          $clientSecret= $clientSecret.SecretValue | ConvertFrom-SecureString -AsPlainText            
+          Write-Host "##vso[task.setvariable variable=ARM_CLIENT_SECRET;]$clientSecret"
+          $tenantId = "c9b9cb50-3644-4db4-a267-fa84df2f4ceb"
+          Write-Host "##vso[task.setvariable variable=ARM_TENANT_ID;]$tenantId"
+          $subscriptionId = "${{ parameters.subscriptionId }}"
+          Write-Host "##vso[task.setvariable variable=ARM_SUBSCRIPTION_ID;]$subscriptionId"
+          $databricksHost = Get-AzKeyVaultSecret -VaultName ${{ parameters.keyVaultName }} -Name 'DATABRICKS-HOST'
+          $databricksHost= $databricksHost.SecretValue | ConvertFrom-SecureString -AsPlainText            
+          Write-Host "##vso[task.setvariable variable=DATABRICKS_HOST;]$databricksHost"
+          Write-Host "Secret fetched and set as environment variable."
+        azurePowerShellVersion: 'LatestVersion'   
+
+    - powershell: | 
+          cd $(Pipeline.Workspace)/databricks-uc-external-locations            
+          Write-Host "Running terraform init"
+          terraform init -backend-config="${{ parameters.environment }}/${{ parameters.environment }}_backend.conf" -reconfigure
+          terraform plan -var-file="${{ parameters.environment }}/${{ parameters.environment }}.tfvars" -out="${{ parameters.environment }}.uc_external_locations_terraform_tfplan.tfplan"
+          terraform apply "${{ parameters.environment }}.uc_external_locations_terraform_tfplan.tfplan"
+      displayName: 'Terraform init, plan and apply for Unity Catalog External Locations'
+      env:
+        ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+        ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+        ARM_TENANT_ID: $(ARM_TENANT_ID)
+        ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)

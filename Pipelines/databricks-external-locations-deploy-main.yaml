@@ -1,0 +1,126 @@
+trigger: none
+
+parameters:
+  # Environment-Operation checkboxes
+  - name: devPlan
+    displayName: 'Dev - Plan'
+    type: boolean
+    default: false
+  
+  - name: devApply
+    displayName: 'Dev - Apply'
+    type: boolean
+    default: false
+  
+  - name: uatPlan
+    displayName: 'UAT - Plan'
+    type: boolean
+    default: false
+  
+  - name: uatApply
+    displayName: 'UAT - Apply'
+    type: boolean
+    default: false
+  
+  - name: prdPlan
+    displayName: 'PRD - Plan'
+    type: boolean
+    default: false
+  
+  - name: prdApply
+    displayName: 'PRD - Apply'
+    type: boolean
+    default: false
+
+stages:
+  # Build stage - always runs
+  - stage: Build
+    displayName: Build Artifacts
+    jobs:
+    - template: "./Templates/databricks-unity-catalog-artifacts-template.yaml"
+      parameters:
+        poolName: example-pool
+
+  # DEV Plan stage
+  - stage: DEV_Plan
+    displayName: "Terraform Plan to Dev"
+    condition: and(succeeded(), eq('${{ parameters.devPlan }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-external-locations-plan-template.yaml"
+      parameters:
+        poolName: "example-pool"
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "dev"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+      
+  # DEV Apply stage
+  - stage: DEV_Apply
+    displayName: "Terraform Apply to Dev"
+    condition: and(succeeded(), eq('${{ parameters.devApply }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-external-locations-apply-template.yaml"
+      parameters:
+        poolName: example-pool
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "dev"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+  
+  # UAT Plan stage
+  - stage: UAT_Plan
+    displayName: "Terraform Plan to UAT"
+    condition: and(succeeded(), eq('${{ parameters.uatPlan }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-external-locations-plan-template.yaml"
+      parameters:
+        poolName: example-pool
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "uat"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+
+  # UAT Apply stage
+  - stage: UAT_Apply
+    displayName: "Terraform Apply to UAT"
+    condition: and(succeeded(), eq('${{ parameters.uatApply }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-external-locations-apply-template.yaml"
+      parameters:
+        poolName: example-pool
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "uat"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+      
+  # PRD Plan stage
+  - stage: PRD_Plan
+    displayName: "Terraform Plan to PRD"
+    condition: and(succeeded(), eq('${{ parameters.prdPlan }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-external-locations-plan-template.yaml"
+      parameters:
+        poolName: example-pool
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "prd"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+  
+  # PRD Apply stage
+  - stage: PRD_Apply
+    displayName: "Terraform Apply to PRD"
+    condition: and(succeeded(), eq('${{ parameters.prdApply }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-external-locations-apply-template.yaml"
+      parameters:
+        poolName: example-pool
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "prd"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"

@@ -1,0 +1,88 @@
+trigger: none
+
+parameters:
+  # Environment-Operation checkboxes
+  - name: devPlan
+    displayName: 'Dev - Plan'
+    type: boolean
+    default: false
+  
+  - name: devApply
+    displayName: 'Dev - Apply'
+    type: boolean
+    default: false
+  
+  - name: prdPlan
+    displayName: 'PRD - Plan'
+    type: boolean
+    default: false
+  
+  - name: prdApply
+    displayName: 'PRD - Apply'
+    type: boolean
+    default: false
+
+stages:
+  # Build stage - always runs
+  - stage: Build
+    displayName: Build Artifacts
+    jobs:
+    - template: "./Templates/databricks-unity-catalog-artifacts-template.yaml"
+      parameters:
+        poolName: poolname
+
+  # DEV Plan stage
+  - stage: DEV_Plan
+    displayName: "Terraform Plan to Dev"
+    condition: and(succeeded(), eq('${{ parameters.devPlan }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-infra-plan-template.yaml"
+      parameters:
+        poolName: "poolname"
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "dev"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+      
+  # DEV Apply stage
+  - stage: DEV_Apply
+    displayName: "Terraform Apply to Dev"
+    condition: and(succeeded(), eq('${{ parameters.devApply }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-infra-apply-template.yaml"
+      parameters:
+        poolName: poolname
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "dev"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+  
+  # PRD Plan stage
+  - stage: PRD_Plan
+    displayName: "Terraform Plan to PRD"
+    condition: and(succeeded(), eq('${{ parameters.prdPlan }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-infra-plan-template.yaml"
+      parameters:
+        poolName: poolname
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "prd"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
+  
+  # PRD Apply stage
+  - stage: PRD_Apply
+    displayName: "Terraform Apply to PRD"
+    condition: and(succeeded(), eq('${{ parameters.prdApply }}', true))
+    dependsOn: Build
+    jobs:
+    - template: "./Templates/databricks-infra-apply-template.yaml"
+      parameters:
+        poolName: poolname
+        connectedServiceName: "example-service-connection"
+        keyVaultName: "example-keyvault"
+        environment: "prd"
+        subscriptionId: "00000000-0000-0000-0000-000000000000"
