@@ -6,13 +6,15 @@ This repository demonstrates a modular approach to deploying Databricks infrastr
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Architecture](#architecture)
+- [Overview](#overview)
 - [Folder Structure](#folder-structure)
-- [Setup](#setup)
-- [Workflow](#workflow)
+- [Process Details](#process-details)
 - [Authentication](#authentication)
 - [Authentication-Related Files](#authentication-related-files)
+- [Required Details for Successful Deployment](#required-details-for-successful-deployment)
+- [How to Deploy](#how-to-deploy)
+- [Additional Notes](#additional-notes)
+- [References](#references)
 
 
 ## Overview
