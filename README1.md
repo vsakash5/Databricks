@@ -16,6 +16,7 @@ This repository demonstrates a modular approach to deploying Databricks infrastr
 - [Additional Notes](#additional-notes)
 - [References](#references)
 
+![image](https://github.com/user-attachments/assets/8cd8f5a6-7825-4070-93f2-59b17cc5e2fa)
 
 ## Overview
 
