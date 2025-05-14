@@ -161,10 +161,6 @@ How:
     Secrets are set as environment variables for Terraform commands.
     See Pipelines/Templates/databricks-infra-plan-template.yaml and similar templates.
 
-Here’s your updated `README.md` file with bullet points for each file description, making it easier to read and navigate:
-
-📄 **[Download Updated README.md](blob:https://m365.cloud.microsoft/7c2863b9-eb67-4c07-84b4-e64320b37668)**
-
 ---
 
 # Authentication-Related Files
