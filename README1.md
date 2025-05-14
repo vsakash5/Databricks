@@ -1,4 +1,4 @@
-# Databricks Terraform Deployment on Azure
+# Deploy Azure Databricks using Terraform and Azure Devops pipeline
 
 This repository demonstrates a modular approach to deploying Databricks infrastructure, Unity Catalog data assets, and external locations using **Terraform**, orchestrated via **Azure DevOps Pipelines** on **Azure**.
 
